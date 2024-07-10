@@ -18,8 +18,9 @@
 
 1. Склонировать проект 'git clone https://github.com/VailaAs/chitai-gorod_project.git'
 2. Установитть все зависимости из requirements.txt
-3. Запустить тесты 'pytest'
- 
+3. Запустить тесты 'pytest -s -v'
+4. Сгенерировать отчет 'allure generate allure-files -o allure-report'
+5. Открыть отчет 'allure open allure-report'
 
 
 ### Стек
