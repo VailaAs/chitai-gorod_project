@@ -12,7 +12,15 @@
 - ./test - тесты
 - ./api - работа с API
 - ./ui - работа с ui
-- ./pages - описание страниц
+-
+
+## Шаги
+
+1. Склонировать проект 'git clone https://github.com/VailaAs/chitai-gorod_project.git'
+2. Установитть все зависимости из requirements.txt
+3. Запустить тесты 'pytest'
+ 
+
 
 ### Стек
 
@@ -29,4 +37,5 @@
 - pip install pytest
 - pip install selenium
 - pip install requests
-- pip install allure-pytest 
+- pip install allure-pytest
+- pip install webdriver-manager 
