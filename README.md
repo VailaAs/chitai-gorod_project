@@ -39,4 +39,6 @@
 - pip install selenium
 - pip install requests
 - pip install allure-pytest
-- pip install webdriver-manager 
+- pip install webdriver-manager
+- pip install configparser
+ 
