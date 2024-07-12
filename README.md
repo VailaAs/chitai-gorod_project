@@ -30,6 +30,9 @@
 - pytest
 - allure
 - webdriver
+- webdriver-manager
+- configparser
+- selenium-wire
 
 ### Полезные ссылки
 - [gitignore](https://www.toptal.com/developers/gitignore)
@@ -41,4 +44,5 @@
 - pip install allure-pytest
 - pip install webdriver-manager
 - pip install configparser
+- pip install selenium-wire
  
