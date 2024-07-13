@@ -3,12 +3,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
-from seleniumwire import webdriver
 
 class MainPage:
     def __init__(self, browser, config) -> None:
         self.url = config.get('urls', 'ui_url')
         self.browser = browser
+        self.interceptor =  self.browser.request_interceptor
     
     @allure.step("Перейти на главную страницу")
     def go_to_page(self):
@@ -32,16 +32,6 @@ class MainPage:
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, '[class="button action-button blue"]')))
         buy_btn.click()
-    
-    # def cookie_close(self):
-    #     WebDriverWait(self.browser, 10).until(
-    #         EC.presence_of_element_located(
-    #             (By.CSS_SELECTOR, '[class="button cookie-notice__button white"]'))).click()
-
-    # def popup_close(self):
-    #     WebDriverWait(self.browser, 10).until(
-    #         EC.presence_of_element_located(
-    #             (By.CSS_SELECTOR, '[class="popmechanic-close"]'))).click()
 
     def get_current_url(self):
         WebDriverWait(self.browser, 5).until(
