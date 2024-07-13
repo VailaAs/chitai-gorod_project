@@ -3,12 +3,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
+from seleniumwire import webdriver as wiredriver
 
 class MainPage:
     def __init__(self, browser, config) -> None:
         self.url = config.get('urls', 'ui_url')
         self.browser = browser
-        self.interceptor =  self.browser.request_interceptor
+        self.browser.request_interceptor = self.auth
     
     @allure.step("Перейти на главную страницу")
     def go_to_page(self):
@@ -17,6 +18,8 @@ class MainPage:
     @allure.step("Войти как авторизированный пользователь")
     def auth(self, token: str, request):
         request.headers['Authorization'] = token
+        self.browser.last_request = request
+        return request
 
     def search(self, input: str):
         field = self.browser.find_element(By.CSS_SELECTOR, '[class="header-search__input"]')
