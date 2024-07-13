@@ -16,9 +16,9 @@ class MainPage:
         self.browser.get(self.url)
     
     @allure.step("Войти как авторизированный пользователь")
-    def auth(self, token: str, request):
+    def auth(self, request):
+        token = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3VzZXItcmlnaHQiLCJzdWIiOjIwODkwOTMxLCJpYXQiOjE3MjA4MjcxNzgsImV4cCI6MTcyMDgzMDc3OCwidHlwZSI6MjB9.o8tgbyOxOU-S8Pmahn6pfy4pLP4PKCahRNpj8KBGYAE'
         request.headers['Authorization'] = token
-        self.browser.last_request = request
         return request
 
     def search(self, input: str):
