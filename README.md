@@ -45,4 +45,5 @@
 - pip install webdriver-manager
 - pip install configparser
 - pip install selenium-wire
+- pip install setuptools
  

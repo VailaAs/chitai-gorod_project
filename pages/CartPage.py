@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 class CartPage:
     def __init__(self, browser, config) -> None:
-        self.url = config.get('urls', 'ui_url') + '/cart'
+        self.url = config.get('data', 'ui_url') + '/cart'
         self.browser = browser
 
     def go_to_cart(self):
@@ -16,4 +16,6 @@ class CartPage:
         act = ActionChains(self.browser)
         act.move_to_element(order_btn).perform()
         order_btn.click()
+
+    
     
