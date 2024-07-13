@@ -4,19 +4,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from seleniumwire import webdriver as wiredriver
+from typing import Any
 
 class MainPage:
     def __init__(self, browser, config) -> None:
         self.url = config.get('urls', 'ui_url')
         self.browser = browser
-        self.browser.request_interceptor = self.auth
+        self.browser.request_interceptor = self.auth()
     
     @allure.step("Перейти на главную страницу")
     def go_to_page(self):
         self.browser.get(self.url)
     
     @allure.step("Войти как авторизированный пользователь")
-    def auth(self, request):
+    def auth(self, request: Any) -> Any:
         token = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3VzZXItcmlnaHQiLCJzdWIiOjIwODkwOTMxLCJpYXQiOjE3MjA4MjcxNzgsImV4cCI6MTcyMDgzMDc3OCwidHlwZSI6MjB9.o8tgbyOxOU-S8Pmahn6pfy4pLP4PKCahRNpj8KBGYAE'
         request.headers['Authorization'] = token
         return request

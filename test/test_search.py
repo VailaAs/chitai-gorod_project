@@ -1,5 +1,6 @@
 import pytest
 from pages.MainPage import MainPage
+from seleniumwire import webdriver as wiredriver
 
 @pytest.mark.parametrize('input', [
     'Test',
