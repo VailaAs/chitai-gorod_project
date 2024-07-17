@@ -1,5 +1,5 @@
 import pytest
-from pages.MainPage import MainPage
+from pages.MainPageUi import MainPage
 
 @pytest.mark.parametrize('input', [
     'Test',

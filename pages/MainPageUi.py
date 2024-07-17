@@ -8,10 +8,17 @@ class MainPage:
     def __init__(self, browser, config) -> None:
         self.url = config.get('data', 'ui_url')
         self.browser = browser
+        self.access_token = 'Bearer%20' + config.get('data', 'access_token')
     
     @allure.step("Перейти на главную страницу")
     def go_to_page(self):
         self.browser.get(self.url)
+
+    def add_cookies(self):
+        self.browser.delete_cookie('access-token')
+        cookie = {'name': 'access-token', 'value': self.access_token}
+        self.browser.add_cookie(cookie)
+        self.browser.refresh()
 
     def search(self, input: str):
         field = self.browser.find_element(By.CSS_SELECTOR, '[class="header-search__input"]')
