@@ -6,11 +6,33 @@ from selenium.webdriver.common.keys import Keys
 
 class CartPage:
     def __init__(self, browser, config) -> None:
-        self.url = config.get('data', 'ui_url') + '/cart'
+        self.url = config.get('data', 'ui_url')
+        self.token = 'Bearer%20' + config.get('data', 'access_token')
         self.browser = browser
 
     def go_to_cart(self):
-        self.browser.get(self.url)
+        self.browser.get(self.url + '/cart')
+        current_token = self.browser.get_cookie('access-token').get('value')
+        if current_token == str(self.token):
+            pass
+        else:
+            self.browser.delete_cookie('access-token')
+            cookie = {'name': 'access-token', 'value': self.token}
+            self.browser.add_cookie(cookie)
+            self.browser.refresh()
+
+        WebDriverWait(self.browser, 5).until( 
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, 'cart-content'))) 
+        count = 0
+        try:
+            elements = self.browser.find_elements(By.CLASS_NAME, 'cart-item')
+            for element in elements:
+                count += 1
+        except Exception as e:
+            print("No elements of such class found:", e)
+        
+        return count
 
     def go_to_order_page(self):
         order_btn = self.browser.find_element(By.CSS_SELECTOR, '[class="button cart-sidebar__order-button blue"]')
@@ -38,7 +60,7 @@ class CartPage:
                     (By.CLASS_NAME, "delivery-type-block delivery-type__pickup-block"))).click()
             WebDriverWait(self.browser, 10).until(
             EC.element_to_be_clickable(
-                (By.CLASS_NAME, "button pvz-default__button blue"))).click()
+                (By.CLASS_NAME, "button pvz-selected__button light-blue"))).click()
             WebDriverWait(self.browser, 10).until(
             EC.element_to_be_clickable(
                 (By.CLASS_NAME, "point-preview__button chg-app-button chg-app-button--primary chg-app-button--small chg-app-button--brand-blue"))).click()
@@ -58,14 +80,11 @@ class CartPage:
         if option == 'sbp':
             sbp = WebDriverWait(self.browser, 15).until(
                 EC.visibility_of_element_located(
-                    (By.ID, 'step2')))
+                    (By.XPATH, '//*[@id="step2"]/div[2]/div/div[2]/button[2]')))
             if "payments-item payments__item payments-item--active" in sbp.get_attribute("class").split():
                 pass
             else:
                 sbp.click()
-                WebDriverWait(self.browser, 10).until(
-                    EC.text_to_be_present_in_element(
-                        (By.CLASS_NAME, 'button checkout-summary__button blue')))
 
         elif option == 'webcard':
             card = WebDriverWait(self.browser, 15).until(
@@ -117,5 +136,39 @@ class CartPage:
     def checkout_order(self):
         self.browser.implicitly_wait(3)
         WebDriverWait(self.browser, 10).until(
-            EC.presence_of_element_located(
+            EC.element_to_be_clickable(
                 (By.XPATH, '//*[@id="__layout"]/div/div[3]/div[1]/div[2]/div/div/div[2]/div/div[3]/button'))).click()
+        
+        if WebDriverWait(self.browser, 10).until(
+            EC.any_of(
+                EC.presence_of_element_located
+                ((By.CSS_SELECTOR, '[class="pay-by-card"]')), 
+            EC.presence_of_element_located
+                ((By.CSS_SELECTOR, '[class="thank-you-page"]')))):
+            return True
+        else:
+            return False
+        
+    def clear_cart(self):
+        self.go_to_cart()
+        try:
+           WebDriverWait(self.browser, 5).until(
+            EC.element_to_be_clickable(
+                (By.CLASS_NAME, 'delete-many'))).click()
+        except Exception as e:
+            print('Cart is clear:', e)
+
+    def cancel_orders(self):
+        self.browser.get(self.url + '/profile/orders')
+        try: 
+            element = WebDriverWait(self.browser, 10).until(  
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, '[class="button order-card__cancel light-blue"]')))
+            WebDriverWait(self.browser, 10).until(  
+                    EC.element_to_be_clickable(element)).click()
+            WebDriverWait(self.browser, 10).until(  
+                    EC.element_to_be_clickable(
+                        (By.CSS_SELECTOR, '[class="dialog__button chg-app-button chg-app-button--primary chg-app-button--extra-large chg-app-button--brand-blue"]'))).click()
+
+        except Exception as e:
+            print('All orders are cancelled:', e)

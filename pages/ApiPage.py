@@ -1,23 +1,46 @@
 import allure
 import requests
 
-class MainPage:
+class ApiPage:
     def __init__(self, config) -> None:
         self.url = config.get('data', 'api_url')
-        self.access_token = 'Bearer ' + config.get('data', 'access_token')
-        self.auth = {'Authorization': self.access_token}
+        self.access_token = config.get('data', 'access_token')
         self.productID = int(config.get('data', 'productID'))
-
+        self.cookies = {}
+        self.headers = {
+            'Cookie': f'__ddg1__=qPo057pMnfImFBsSjlYl; access-token=Bearer%20{self.access_token}; refresh-token=',
+            'Authorization': 'Bearer ' + self.access_token
+        }
         self.session = requests.Session()
-        self.session.headers.update(self.auth)
+
+    def get_request(self, url, params=''):
+        try:
+            response = self.session.get(url, headers=self.headers, params=params)
+            self.cookies.update(response.cookies.get_dict())
+            return response
+        except requests.RequestException as e:
+            print("An error occurred:", e)
+            return None
+
+    def post_request(self, url, params='', body='', headers=None):
+        try:
+            _headers = self.headers.copy()
+            if headers:
+                _headers.update(headers)
+            response = self.session.post(url, headers=_headers, params=params, json=body)
+            self.cookies.update(response.cookies.get_dict())
+            return response
+        except requests.RequestException as e:
+            print("An error occurred:", e)
+            return None
 
     def add_to_cart(self):
-        body = {"id": self.productID,"adData":{"item_list_name":"catalog-main-category","product_shelf":""}}
-        response = self.session.post(self.url + '/cart/product', headers = self.auth, json=body)
+        _body = {"id": self.productID,"adData":{"item_list_name":"articles-slug","product_shelf":"Блок товара в статьях"}}
+        response = self.post_request(self.url + '/cart/product', body=_body)
         return response.status_code
     
     def view_cart(self):
-        response = self.session.get(self.url + '/cart', headers = self.auth)
+        response = self.get_request(self.url + '/cart')
         return response.status_code
     
     def shops_info(self, city_id:int):
@@ -26,11 +49,11 @@ class MainPage:
             'userType': 'individual',
             'cityId': city_id
         }
-        response = self.session.get(self.url + '/order-info/shop', params=my_params, headers = self.auth)
+        response = self.get_request(self.url + '/order-info/shop', params=my_params)
         return response.json()
 
     def orders_calculate(self, city_id:int, point_id:int, payment_type: str, username: str, userphone: str, useremail: str, delivery_date: str):
-        body = {
+        _body = {
             "cityId": city_id,
             "shipment":{
                 "type":"shop",
@@ -65,11 +88,11 @@ class MainPage:
             "bonusPayment":0
         }
 
-        response = self.session.post(self.url + '/orders-calculate', headers = self.auth, json=body)
+        response = self.post_request(self.url + '/orders-calculate', body=_body, headers={'Content-Type': 'application/json'})
         return response.status_code
     
     def create_shop_order(self, city_id:int, point_id:int, payment_type: str, username: str, userphone: str, useremail: str, delivery_date: str):
-        body = {
+        _body = {
             "cityId": city_id,
             "shipment":{
                 "type":"shop",
@@ -104,7 +127,7 @@ class MainPage:
             "bonusPayment":0
         }
 
-        response = self.session.post(self.url + '/orders', headers = self.auth, json=body)
+        response = self.post_request(self.url + '/orders', body=_body, headers={'Content-Type': 'application/json'})
         return response.status_code
     
 

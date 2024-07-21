@@ -1,10 +1,9 @@
-from time import sleep
-from pages.MainPageApi import MainPage
+from pages.ApiPage import ApiPage
 # from pages.CartPageApi import CartPage
 
 def test_add_to_cart(config):
-    main = MainPage(config)
-    m= main.add_to_cart()
+    main = ApiPage(config)
+    main.add_to_cart()
     main.view_cart()
     point_id = main.shops_info(213)['data']['items'][0]['id']
     delivery_date = main.shops_info(213)['data']['items'][0]['deliveryDate']
