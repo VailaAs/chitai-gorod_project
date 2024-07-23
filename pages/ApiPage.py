@@ -10,7 +10,8 @@ class ApiPage:
         self.headers = {'Authorization': 'Bearer ' + self.access_token}
         self.session = requests.Session()
 
-    def get_request(self, url, params={}):
+    @allure.step("API - Отправить GET запрос")
+    def get_request(self, url: str, params: dict = {}) -> requests.Response:
         try:
             response = self.session.get(url, headers=self.headers, params=params)
             return response
@@ -18,7 +19,8 @@ class ApiPage:
             print("An error occurred:", e.response)
             return None
 
-    def post_request(self, url, params={}, body={}):
+    @allure.step("API - Отправить POST запрос")
+    def post_request(self, url: str, params: dict = {}, body: dict = {}) -> requests.Response:
         try:
             response = self.session.post(url, headers=self.headers, params=params, json=body)
             return response
@@ -26,16 +28,19 @@ class ApiPage:
             print("An error occurred:", e.response)
             return None
 
-    def add_to_cart(self):
+    @allure.step("API - Добавить товар в корзину")
+    def add_to_cart(self) -> int:
         _body = {"id": self.productID,"adData":{"item_list_name":"articles-slug","product_shelf":"Блок товара в статьях"}}
         response = self.post_request(self.url + '/cart/product', body=_body)
         return response.status_code
-    
-    def view_cart(self):
+
+    @allure.step("API - Просмотреть корзину")
+    def view_cart(self) -> int:
         response = self.get_request(self.url + '/cart')
-        return response.status_code
+        return response.json()['products'][0]['goodsId']
     
-    def shops_info(self, city_id:int):
+    @allure.step("API - Получить информацию о магазине")
+    def shops_info(self, city_id:int) -> dict:
         my_params = {
             'isCheckout': True,
             'userType': 'individual',
@@ -44,17 +49,8 @@ class ApiPage:
         response = self.get_request(self.url + '/order-info/shop', params=my_params)
         return response.json()
     
-    def courier_info(self, city_id:int):
-        my_params = {
-            'isCheckout': True,
-            'userType': 'individual',
-            'cityId': city_id,
-            'orderType': 'order'
-        }
-        response = self.get_request(self.url + '/order-info/courier-options', params=my_params)
-        return response.json()
-    
-    def suggest_address_street(self, country_code: str= 'RU'):
+    @allure.step("API - Отправить запрос на поиск адреса по ключевому слову")
+    def suggest_address_street(self, country_code: str = 'RU') -> str:
         my_params = {
             'countryCode': country_code,
             'count': 1,
@@ -62,8 +58,9 @@ class ApiPage:
         }
         response = self.get_request(self.url + '/location/suggest/address', params=my_params)
         return response.json()[0]['address']
-        
-    def suggest_address_house(self, country_code: str= 'RU'):
+
+    @allure.step("API - Получить информацию об адресе получения")
+    def suggest_address_house(self, country_code: str = 'RU') -> dict:
         my_params = {
             'countryCode': country_code,
             'count': 2,
@@ -72,12 +69,14 @@ class ApiPage:
         response = self.get_request(self.url + '/location/suggest/address', params=my_params)
         return response.json()
 
+    @allure.step("API - Получить тело запроса")
     def order_body(self, 
-                city_id:int,
-                shipment_type: str,
-                username: str, 
-                userphone: str, 
-                useremail: str):
+                   city_id:int,
+                   shipment_type: str,
+                   username: str, 
+                   userphone: str, 
+                   useremail: str) -> dict:
+
         shops_data = self.shops_info(city_id)['data']['items'][0]
         address_data = self.suggest_address_house()
         _body = {
@@ -175,23 +174,25 @@ class ApiPage:
             }
         return _body
 
+    @allure.step("API - Создать данные для заказа")
     def orders_calculate(self, 
-                        city_id:int,
-                        shipment_type:str,
-                        username: str,
-                        userphone: str,
-                        useremail: str):
+                         city_id:int,
+                         shipment_type:str,
+                         username: str,
+                         userphone: str,
+                         useremail: str) -> int:
 
         _body = self.order_body(city_id, shipment_type, username, userphone, useremail)
         response = self.post_request(self.url + '/orders-calculate', body=_body)
         return response.status_code
     
+    @allure.step("API - Оформить заказ")
     def order_create(self, 
-                    city_id: int,
-                    shipment_type: str,
-                    username: str, 
-                    userphone: str, 
-                    useremail: str):
+                     city_id: int,
+                     shipment_type: str,
+                     username: str, 
+                     userphone: str, 
+                     useremail: str) -> str:
 
         _body = self.order_body(city_id, shipment_type, username, userphone, useremail)
         calculation_status = self.orders_calculate(city_id, shipment_type, username, userphone, useremail)
@@ -206,11 +207,13 @@ class ApiPage:
             print("Warning: 'id' not found in response. Response content:", response.json())
             return ''
 
-    def view_order(self, order_id: int):
+    @allure.step("API - Просмотреть заказ")
+    def view_order(self, order_id: int) -> int:
         response = self.get_request(self.url2 + '/orders/' + order_id)
         return response.status_code
     
-    def delete_order(self, order_id: int):
+    @allure.step("API - Удалить заказ")
+    def delete_order(self, order_id: int) -> int:
         try:
            response = self.session.delete(self.url + '/orders/' + order_id, headers = self.headers)
            return response.status_code
