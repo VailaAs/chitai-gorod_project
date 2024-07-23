@@ -14,9 +14,7 @@ class MainPage:
     def go_to_page(self):
         self.browser.get(self.url)
         current_token = self.browser.get_cookie('access-token').get('value')
-        if current_token == str(self.token):
-            pass
-        else:
+        if current_token != str(self.token):
             self.browser.delete_cookie('access-token')
             cookie = {'name': 'access-token', 'value': self.token}
             self.browser.add_cookie(cookie)
@@ -45,3 +43,31 @@ class MainPage:
             EC.presence_of_element_located
                 ((By.CSS_SELECTOR, '[class="search-page__found-message"]'))))
         return self.browser.current_url
+    
+    def cancel_orders(self):
+        self.browser.get(self.url + '/profile/orders')
+        try: 
+            while True: 
+                elements = WebDriverWait(self.browser, 5).until(  
+                    EC.presence_of_all_elements_located(
+                        (By.CSS_SELECTOR, '[class="button order-card__cancel light-blue"]')))
+                
+                if not elements:
+                    print('No more orders to cancel.')
+                    break
+
+                for element in elements:
+                    act = ActionChains(self.browser)
+                    act.move_to_element(element).perform()
+
+                    WebDriverWait(self.browser, 10).until(  
+                        EC.element_to_be_clickable(element)).click()
+                    WebDriverWait(self.browser, 10).until(  
+                        EC.element_to_be_clickable(
+                            (By.CSS_SELECTOR, '[class="dialog__button chg-app-button chg-app-button--primary chg-app-button--extra-large chg-app-button--brand-blue"]'))).click()
+                    WebDriverWait(self.browser, 10).until(  
+                        EC.staleness_of(element))
+                    break
+
+        except Exception as e:
+            print('All orders are cancelled:', e)

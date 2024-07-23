@@ -2,6 +2,7 @@ import pytest
 from pages.MainPage import MainPage
 from pages.CartPage import CartPage
 
+
 @pytest.mark.parametrize('input', [
     'Test',
     'Дюна',
@@ -37,6 +38,7 @@ def test_add_to_cart(browser, config):
     main.add_to_cart()
     c_a = cart.go_to_cart()
     assert c_a-c_b == 1
+    cart.clear_cart()
 
 def test_default_user_order(browser, config):
     main = MainPage(browser, config)
@@ -48,11 +50,11 @@ def test_default_user_order(browser, config):
     cart.choose_city_in_rus()
     cart.choose_pickup_point()
     success = cart.checkout_order()
-    assert success == True
     if success == True:
-        cart.cancel_orders()
+        main.cancel_orders()
     else:
         cart.clear_cart()
+    assert success == True
 
 @pytest.mark.parametrize('payment_method', [
     'sbp',
@@ -70,8 +72,8 @@ def test_payment_methods(browser, config, payment_method: str):
     cart.choose_pickup_point()
     cart.choose_payment_method(payment_method)
     success = cart.checkout_order()
-    assert success == True
     if success == True:
-        cart.cancel_orders()
+        main.cancel_orders()
     else:
         cart.clear_cart()
+    assert success == True
