@@ -72,16 +72,17 @@ class CartPage:
                 EC.element_to_be_clickable(
                     (By.XPATH, '//*[@id="step1"]/div[2]/div/section[2]/div[2]'))).click()
         try:
-            map = WebDriverWait(self.browser, 7).until(
-                    EC.presence_of_element_located(
-                        (By.CLASS_NAME, 'pvz-default')))
-            if map:
+            btn = WebDriverWait(self.browser, 10).until(
+                    EC.visibility_of_element_located(
+                        (By.XPATH, '//*[@id="step1"]/div[2]/section/div/div')))
+            if btn:
                 WebDriverWait(self.browser, 10).until(
-                    EC.element_to_be_clickable(
-                        (By.CLASS_NAME, 'button pvz-default__button blue'))).click()
+                    EC.element_to_be_clickable(btn)).click()
+                select = WebDriverWait(self.browser, 10).until(
+                    EC.visibility_of_element_located(
+                        (By.XPATH, '//*[@id="__layout"]/div/div[5]/div/div[2]/div/div[2]/div/div[2]/div/div[1]/div[2]/div[1]/div[2]/button[1]')))
                 WebDriverWait(self.browser, 10).until(
-                    EC.element_to_be_clickable(
-                        (By.CLASS_NAME, "point-preview__button chg-app-button chg-app-button--primary chg-app-button--small chg-app-button--brand-blue"))).click()
+                    EC.element_to_be_clickable(select)).click()
         
         except TimeoutException:
             print("Map not found, proceeding to check for selected map layout.")

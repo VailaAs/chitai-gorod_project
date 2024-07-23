@@ -19,9 +19,10 @@
 1. Склонировать проект 'git clone https://github.com/VailaAs/chitai-gorod_project.git'
 2. Установить все зависимости из requirements.txt
 3. Скопировать access-token по инструкции ниже.
-3. Запустить тесты 'pytest -s -v' ИЛИ 'python -m pytest -s -v'
-4. Сгенерировать отчет 'allure generate allure-files -o allure-report'
-5. Открыть отчет 'allure open allure-report'
+3. Запустить тесты 'pytest -s -v --alluredir allure-result' ИЛИ 'python -m pytest -s -v --alluredir allure-result'
+4. Установить Allure Report.
+5. Сгенерировать отчет 'allure generate allure-files -o allure-report'
+6. Открыть отчет 'allure open allure-report'
 
 ## Инструкция по использованию access-token в проекте
 
