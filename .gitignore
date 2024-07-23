@@ -1,4 +1,5 @@
 allure-result/
+allure-report/
 .vscode/
 myenv/
 # Byte-compiled / optimized / DLL files

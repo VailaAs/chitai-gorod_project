@@ -20,7 +20,7 @@
 2. Установить все зависимости из requirements.txt
 3. Скопировать access-token по инструкции ниже.
 3. Запустить тесты 'pytest -s -v --alluredir=allure-result' ИЛИ 'python -m pytest -s -v --alluredir=allure-result'
-4. Сгенерировать отчет 'allure generate allure-files -o allure-report'
+4. Сгенерировать отчет 'allure generate allure-files -o allure-report' ИЛИ 'allure serve allure-result '
 5. Открыть отчет 'allure open allure-report'
 
 ## Инструкция по использованию access-token в проекте
