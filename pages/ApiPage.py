@@ -1,6 +1,7 @@
 import allure
 import requests
 
+
 class ApiPage:
     def __init__(self, config) -> None:
         self.url = config.get('data', 'api_url')
@@ -30,7 +31,9 @@ class ApiPage:
 
     @allure.step("API - Добавить товар в корзину")
     def add_to_cart(self) -> int:
-        _body = {"id": self.productID,"adData":{"item_list_name":"articles-slug","product_shelf":"Блок товара в статьях"}}
+        _body = {"id": self.productID, "adData": {
+            "item_list_name": "articles-slug",
+            "product_shelf": "Блок товара в статьях"}}
         response = self.post_request(self.url + '/cart/product', body=_body)
         return response.status_code
 
@@ -38,9 +41,9 @@ class ApiPage:
     def view_cart(self) -> int:
         response = self.get_request(self.url + '/cart')
         return response.json()['products'][0]['goodsId']
-    
+
     @allure.step("API - Получить информацию о магазине")
-    def shops_info(self, city_id:int) -> dict:
+    def shops_info(self, city_id: int) -> dict:
         my_params = {
             'isCheckout': True,
             'userType': 'individual',
@@ -48,7 +51,7 @@ class ApiPage:
         }
         response = self.get_request(self.url + '/order-info/shop', params=my_params)
         return response.json()
-    
+   
     @allure.step("API - Отправить запрос на поиск адреса по ключевому слову")
     def suggest_address_street(self, country_code: str = 'RU') -> str:
         my_params = {
@@ -70,11 +73,11 @@ class ApiPage:
         return response.json()
 
     @allure.step("API - Получить тело запроса")
-    def order_body(self, 
-                   city_id:int,
+    def order_body(self,
+                   city_id: int,
                    shipment_type: str,
-                   username: str, 
-                   userphone: str, 
+                   username: str,
+                   userphone: str,
                    useremail: str) -> dict:
 
         shops_data = self.shops_info(city_id)['data']['items'][0]
@@ -120,7 +123,7 @@ class ApiPage:
             _body["shipment"] = {
                 "type": 'courier',
                 "id": 53,
-                "address": {  
+                "address": {
                     "address": shops_data['address'],
                     "apartment": None,
                     "building": None,
@@ -175,9 +178,9 @@ class ApiPage:
         return _body
 
     @allure.step("API - Создать данные для заказа")
-    def orders_calculate(self, 
-                         city_id:int,
-                         shipment_type:str,
+    def orders_calculate(self,
+                         city_id: int,
+                         shipment_type: str,
                          username: str,
                          userphone: str,
                          useremail: str) -> int:
@@ -185,20 +188,20 @@ class ApiPage:
         _body = self.order_body(city_id, shipment_type, username, userphone, useremail)
         response = self.post_request(self.url + '/orders-calculate', body=_body)
         return response.status_code
-    
+
     @allure.step("API - Оформить заказ")
-    def order_create(self, 
+    def order_create(self,
                      city_id: int,
                      shipment_type: str,
-                     username: str, 
-                     userphone: str, 
+                     username: str,
+                     userphone: str,
                      useremail: str) -> str:
 
         _body = self.order_body(city_id, shipment_type, username, userphone, useremail)
         calculation_status = self.orders_calculate(city_id, shipment_type, username, userphone, useremail)
         if calculation_status != 200:
             raise Exception("Order calculation failed with status code: {}".format(calculation_status))
-        
+
         response = self.post_request(self.url + '/orders', body=_body)
 
         if 'id' in response.json():
@@ -211,7 +214,7 @@ class ApiPage:
     def view_order(self, order_id: int) -> int:
         response = self.get_request(self.url2 + '/orders/' + order_id)
         return response.status_code
-    
+
     @allure.step("API - Удалить заказ")
     def delete_order(self, order_id: int) -> int:
         try:

@@ -56,6 +56,15 @@ access-token - основная перменная проекта. Она хра
 ### Полезные ссылки
 
 - [gitignore](https://www.toptal.com/developers/gitignore)
+- [проект по ручному тестированию](https://sanaforky.atlassian.net/l/cp/sQPeycRd)
+
+<details>
+<summary>Данные для доступа к проекту</summary>
+
+- Логин: sanaforky@gmail.com
+- Пароль: HatsuneMiku69
+
+</details>
 
 ### Библиотеки (**!**)
 

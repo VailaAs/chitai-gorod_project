@@ -8,7 +8,7 @@ from pages.ApiPage import ApiPage
 @allure.severity(severity_level='critical')
 @allure.title('Самовывоз из магазина')
 @allure.description('Оформление заказа самовывозом из магазина и его отмена')
-@allure.feature('Positive Test: Оформление заказа')
+@allure.feature('Test 1')
 def test_pickup_from_shop(config):
     api = ApiPage(config)
     api.add_to_cart()
@@ -20,12 +20,13 @@ def test_pickup_from_shop(config):
     """Проверяем успешное удаление заказа"""
     assert api.delete_order(order_id) == 204
 
+
 @allure.epic("Читай-город")
 @allure.suite('API')
 @allure.severity(severity_level='high')
 @allure.title('Курьер в России')
 @allure.description('Оформление заказа курьером в России и его отмена')
-@allure.feature('Positive Test: Оформление заказа')
+@allure.feature('Test 2')
 def test_courier_in_rus(config):
     api = ApiPage(config)
     api.add_to_cart()
@@ -37,12 +38,13 @@ def test_courier_in_rus(config):
     """Проверяем успешное удаление заказа"""
     assert api.delete_order(order_id) == 204
 
+
 @allure.epic("Читай-город")
 @allure.suite('API')
 @allure.severity(severity_level='high')
 @allure.title('Почта РФ')
 @allure.description('Оформление заказа почтой РФ и его отмена')
-@allure.feature('Positive Test: Оформление заказа')  
+@allure.feature('Test 3')
 def test_rus_post(config):
     api = ApiPage(config)
     api.add_to_cart()
@@ -54,12 +56,13 @@ def test_rus_post(config):
     """Проверяем успешное удаление заказа"""
     assert api.delete_order(order_id) == 204
 
+
 @allure.epic("Читай-город")
 @allure.suite('API')
 @allure.severity(severity_level='low')
 @allure.title('Пользователь с английским именем')
 @allure.description('Заказ курьером в России от пользователя с английским именем и его отмена')
-@allure.feature('Negative Test: Оформление заказа')
+@allure.feature('Test 4')
 def test_courier_latin_username(config):
     api = ApiPage(config)
     api.add_to_cart()
@@ -69,12 +72,13 @@ def test_courier_latin_username(config):
     """Проверяем неуспешное оформление заказа"""
     assert api.view_order(order_id) == 400
 
+
 @allure.epic("Читай-город")
 @allure.suite('API')
 @allure.severity(severity_level='low')
 @allure.title('Почта с недействительным доменом')
 @allure.description('Оформление заказа самовывозом из магазина от пользователя с почтой с недействительным доменом и его отмена')
-@allure.feature('Negative Test: Оформление заказа')
+@allure.feature('Test 5')
 @pytest.mark.xfail()
 def test_useremail_with_wrong_domain(config):
     api = ApiPage(config)
@@ -87,12 +91,13 @@ def test_useremail_with_wrong_domain(config):
     """Проверяем успешное оформление заказа"""
     assert res == 200
 
+
 @allure.epic("Читай-город")
 @allure.suite('API')
 @allure.severity(severity_level='low')
 @allure.title('Телефон с недействительным кодом страны')
 @allure.description('Оформление заказа самовывозом из магазина от пользователя с телефоном с недействительным кодом страны и его отмена')
-@allure.feature('Negative Test: Оформление заказа')
+@allure.feature('Test 6')
 @pytest.mark.xfail()
 def test_userephone_with_wrong_code(config):
     api = ApiPage(config)
